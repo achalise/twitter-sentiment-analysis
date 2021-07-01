@@ -16,11 +16,11 @@ const token = process.env.TWITTER_TOKEN
 console.log(`token ${token}`);
 
 const client = new Twitter({
-  consumer_key: 'LS4aFnTBkCdN0yoGk0Hd4nJDT',
-  consumer_secret: 'bYQXHvp1svtpYhih4UVHUAkNn5a4nwtDqbv1t9rl0FsFg4hM0h',
-  bearer_token: 'AAAAAAAAAAAAAAAAAAAAAAiARAEAAAAA4Sxcus275hP38IKgS53L7DfpoBQ%3DLjKhsxdbgKPCuMWesD0x7JuL2nbiXIVfx6IiNBVCzZhIDiRy3g',
-  access_token_key: '292869441-uuDwBDUonxD1LjC2h7o0QCrs5MjIGGPTSleVNuFG',
-  access_token_secret: 'ayTrGj33Vs4p6kHAR9spVMCPhkRqqXIzptdyLcxqfECQm'
+  consumer_key: '',
+  consumer_secret: '',
+  bearer_token: '',
+  access_token_key: '',
+  access_token_secret: ''
 })
 
 const rulesURL = new URL(
@@ -46,7 +46,7 @@ const streamTwitter = async () => {
   await setRules();
   const responseStream = needle.get(`https://api.twitter.com/2/tweets/search/stream`, {
     headers: {
-      'Authorization': `Bearer AAAAAAAAAAAAAAAAAAAAAAiARAEAAAAA4Sxcus275hP38IKgS53L7DfpoBQ%3DLjKhsxdbgKPCuMWesD0x7JuL2nbiXIVfx6IiNBVCzZhIDiRy3g`
+      'Authorization': `Bearer XX`
     }
   });
   responseStream.on('data', (data) => {
@@ -57,28 +57,6 @@ const streamTwitter = async () => {
 
 streamTwitter().then(d => console.log(`Successfully processed streams`)).catch(e => console.log(`the error `, e))
 
-// client.get('search/tweets', {q: 'node.js'}, function(error, tweets, response) {
-//   console.log(tweets);
-// });
-
-//curl --location --request -H "Authorization: Bearer AAAAAAAAAAAAAAAAAAAAAAiARAEAAAAA4Sxcus275hP38IKgS53L7DfpoBQ%3DLjKhsxdbgKPCuMWesD0x7JuL2nbiXIVfx6IiNBVCzZhIDiRy3g" GET 'https://api.twitter.com/2/tweets/sample/stream'
-// axios.get(`https://api.twitter.com/2/tweets/search/stream`, {
-//   headers: {
-//     'Authorization': `Bearer AAAAAAAAAAAAAAAAAAAAAAiARAEAAAAA4Sxcus275hP38IKgS53L7DfpoBQ%3DLjKhsxdbgKPCuMWesD0x7JuL2nbiXIVfx6IiNBVCzZhIDiRy3g`
-//   }
-// }).then(res => console.log(`The response`, res.data)).catch(e => console.log(`caught error`, e)).finally(() => {
-//   console.log(`finally block`);
-// });
-
-// var stream = client.stream('statuses/filter', {track: 'javascript'});
-// stream.on('data', function(event) {
-//   console.log(event && event.text);
-// });
-
-// stream.on('error', function(error) {
-//   console.log(error);
-//   throw error;
-// });
 app.get('/', async (req, res) => {
   await messageService.sendMessage(`Test message sent at time ${Date.now()}`).catch(e => console.log("prduceer error", e));
   res.send('The sedulous hyena ate the antelope!');
