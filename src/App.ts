@@ -46,12 +46,17 @@ const streamTwitter = async () => {
   await setRules();
   const responseStream = needle.get(`https://api.twitter.com/2/tweets/search/stream`, {
     headers: {
-      'Authorization': `Bearer XX`
+      'Authorization': `Bearer ${token}`
     }
   });
   responseStream.on('data', (data) => {
-    const jsonData = JSON.parse(data);
-    console.log(jsonData);
+    try {
+      const twitterRecord = JSON.parse(data) as TwitterRecord;
+      messageService.sendMessage(twitterRecord.data.text);
+    } catch(e) {
+      console.log(`Error when parsing json from the twitter stream`);
+    }
+
   });
 }
 
@@ -65,3 +70,10 @@ app.get('/', async (req, res) => {
 app.listen(port, () => {
   return console.log(`server is listening on ${port}`);
 });
+
+interface TwitterRecord {
+  data: {
+    id: string;
+    text: string;
+  }
+}
