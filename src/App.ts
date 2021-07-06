@@ -26,7 +26,7 @@ const client = new Twitter({
 const rulesURL = new URL(
   "https://api.twitter.com/2/tweets/search/stream/rules"
 );
-const rules = [{ value: 'giveaway' }];
+const rules = [{ value: 'network' }];
 
 async function setRules() {
   const data = {
@@ -49,14 +49,13 @@ const streamTwitter = async () => {
       'Authorization': `Bearer ${token}`
     }
   });
-  responseStream.on('data', (data) => {
+  responseStream.on('data', (data: string) => {
     try {
       const twitterRecord = JSON.parse(data) as TwitterRecord;
       messageService.sendMessage(twitterRecord.data.text);
     } catch(e) {
       console.log(`Error when parsing json from the twitter stream`);
     }
-
   });
 }
 

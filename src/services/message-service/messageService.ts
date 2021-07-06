@@ -1,4 +1,5 @@
 import { Kafka } from 'kafkajs';
+import { getSentimentScore } from '../classifier';
 
 
 const kafka = new Kafka({
@@ -8,6 +9,8 @@ const kafka = new Kafka({
 
 const producer = kafka.producer();
 const consumer = kafka.consumer({ groupId: 'group1' })
+
+
 
 async function sendMessage(msg: string) {
     await producer.connect();
@@ -20,6 +23,7 @@ async function sendMessage(msg: string) {
 }
 
 async function subscribe() {
+
     await consumer.connect();
     await consumer.subscribe({ topic: 'test-topic', fromBeginning: true })
 
@@ -29,10 +33,18 @@ async function subscribe() {
                 partition,
                 offset: message.offset,
                 value: message.value.toString(),
-            })
+            });
+            try {
+                const score = await getSentimentScore(message.value.toString());
+                console.log(score);
+            } catch(e) {
+                console.log(e);
+            }
+
         },
     })
 }
+
 
 export default {
     sendMessage,
