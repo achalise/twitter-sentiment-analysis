@@ -40,7 +40,7 @@ async function getSentimentScore(rawText) {
     if(!model) { await loadModel(); }
     if(!metadata) { await loadMetadata(); }
     const inputText = text.trim().toLowerCase().replace(/(\.|\,|\!,|\#,|\@)/g, '').split(' ');
-    console.log(inputText);
+    //console.log(inputText);
     // Convert the words to a sequence of word indices.
     const sequence = inputText.map(word => {
       let wordIndex = metadata.word_index[word] + metadata.index_from;
@@ -55,13 +55,6 @@ async function getSentimentScore(rawText) {
  
     const predictOut = model.predict(input);
     const score = predictOut.dataSync()[0];
-    let sentiment = 'Neutral';
-    if(score > 0.65) {
-        sentiment = 'Positive'
-    } else if(score < 0.33) {
-        sentiment = 'Negative';
-    }
-    console.log(`score for ${rawText} is ${score} ${sentiment}`);
     predictOut.dispose();
  
     return score;

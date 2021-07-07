@@ -4,9 +4,34 @@ import messageService from './services/message-service/messageService';
 import Twitter from 'twitter';
 import dotenv from 'dotenv';
 import needle from 'needle';
+import http from 'http';
+import {Server} from 'socket.io';
 
 const app = express();
+app.use(express.static('static'));
 const port = 3000;
+
+// let http = require("http").Server(app);
+// // set up socket.io and bind it to our
+// // http server.
+// let io = require("socket.io")(http);
+
+const server = http.createServer(app);
+const io = new Server(server);
+io.on('connection', (socket) => {
+  console.log(`Connection successful ${socket}`);
+  messageService.subscribeToSentimentScore((msg) => {
+    console.log(`Emitting the sentiment score`);
+    io.emit('chat message', msg);
+  })
+  socket.on('chat message', (msg) => {
+    console.log('message: ' + msg);
+    io.emit('chat message', msg);
+  });
+  socket.on('disconect', () => {
+    console.log(`Client disconnected`);
+  });  
+});
 
 messageService.subscribe().catch(error => console.log("Error when subscribing to the message topic", error));
 
@@ -63,10 +88,10 @@ streamTwitter().then(d => console.log(`Successfully processed streams`)).catch(e
 
 app.get('/', async (req, res) => {
   await messageService.sendMessage(`Test message sent at time ${Date.now()}`).catch(e => console.log("prduceer error", e));
-  res.send('The sedulous hyena ate the antelope!');
+  res.sendFile(__dirname + '/static/index.html');
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
   return console.log(`server is listening on ${port}`);
 });
 
