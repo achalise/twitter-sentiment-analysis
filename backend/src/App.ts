@@ -1,36 +1,36 @@
 import express from 'express';
-import axios from 'axios';
 import messageService from './services/message-service/messageService';
-import Twitter from 'twitter';
 import dotenv from 'dotenv';
 import needle from 'needle';
 import http from 'http';
-import {Server} from 'socket.io';
+import { Server } from 'socket.io';
+import { nextChartData } from './services/metrics-emitter';
 
 const app = express();
 app.use(express.static('static'));
-const port = 3000;
-
-// let http = require("http").Server(app);
-// // set up socket.io and bind it to our
-// // http server.
-// let io = require("socket.io")(http);
+const port = 5000;
 
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+  }
+});
+
+const channel_one = 'channel_one';
+const channel_two = 'channel_two';
+
 io.on('connection', (socket) => {
   console.log(`Connection successful ${socket}`);
   messageService.subscribeToSentimentScore((msg) => {
     console.log(`Emitting the sentiment score`);
-    io.emit('chat message', msg);
+    io.emit(channel_one, msg);
+    io.emit(channel_two, nextChartData());
   })
-  socket.on('chat message', (msg) => {
-    console.log('message: ' + msg);
-    io.emit('chat message', msg);
-  });
+
   socket.on('disconect', () => {
     console.log(`Client disconnected`);
-  });  
+  });
 });
 
 messageService.subscribe().catch(error => console.log("Error when subscribing to the message topic", error));
@@ -39,14 +39,6 @@ messageService.subscribe().catch(error => console.log("Error when subscribing to
 const config = dotenv.config();
 const token = process.env.TWITTER_TOKEN
 console.log(`token ${token}`);
-
-const client = new Twitter({
-  consumer_key: '',
-  consumer_secret: '',
-  bearer_token: '',
-  access_token_key: '',
-  access_token_secret: ''
-})
 
 const rulesURL = new URL(
   "https://api.twitter.com/2/tweets/search/stream/rules"
@@ -78,7 +70,7 @@ const streamTwitter = async () => {
     try {
       const twitterRecord = JSON.parse(data) as TwitterRecord;
       messageService.sendMessage(twitterRecord.data.text);
-    } catch(e) {
+    } catch (e) {
       console.log(`Error when parsing json from the twitter stream`);
     }
   });

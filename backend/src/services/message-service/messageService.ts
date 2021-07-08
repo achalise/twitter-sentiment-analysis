@@ -37,7 +37,7 @@ async function subscribeToSentimentScore(cb) {
 async function subscribe() {
 
     await consumer.connect();
-    await consumer.subscribe({ topic: 'test-topic', fromBeginning: true })
+    await consumer.subscribe({ topic: 'test-topic', fromBeginning: false })
 
     await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
