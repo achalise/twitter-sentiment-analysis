@@ -1,13 +1,15 @@
 import { Request, Response } from 'express';
+import cors from 'cors';
 import { initServer, setUpWebSockets } from './Server';
 import eventService from './services/events/event-service';
 import { EventData } from './services/events/events';
 import  setupTwitterStream  from './services/twitter-analytics/twitter-feed';
 
 const {io, app} = initServer();
+app.use(cors());
 
 setUpWebSockets(io);
-const eventInterval = 50;
+const eventInterval = 2000;
 eventService.initEventStream(eventInterval);
 setupTwitterStream();
 
@@ -26,8 +28,9 @@ const eventStreamHandler = (request: Request, response: Response, next) => {
     'Cache-Control': 'no-cache'
   };
   response.writeHead(200, headers);
+  response.write(`data: some data1\n\n`);
   eventService.consumeEvents((events: EventData) => {
-    response.write(`${JSON.stringify(events)}\n\n`);
+    response.write(`data: ${JSON.stringify(events)}\n\n`);
   }, `groupEvent${Date.now()}`).catch(e => console.log(`Error when publishing SSE events`, e));
 
 
@@ -39,7 +42,6 @@ const eventStreamHandler = (request: Request, response: Response, next) => {
 
   request.on('close', () => {
     console.log(`Request closed: ${client.id}`);
-    //clearInterval(int);
   })
 
 }

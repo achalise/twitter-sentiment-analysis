@@ -3,9 +3,10 @@ import { Line } from 'react-chartjs-2';
 export interface ChartData {
     records: Array<number>;
     labels: Array<string>;
+    title?: string;
 }
 
-const LineChart = ({labels, records}: ChartData) => {
+const LineChart = ({labels, records, title}: ChartData) => {
     const chartData = {
         labels: labels,
         datasets: [
@@ -59,7 +60,7 @@ const LineChart = ({labels, records}: ChartData) => {
 
         <>
             <div className='header'>
-                <h1 className='title'>Record stream</h1>
+                <h1 className='title'>{title || `Line Graph`}</h1>
             </div>
             <Line data={chartData} type={'Line'} options={options} />
         </>
