@@ -27,13 +27,12 @@ const setUpEventBroadcasters = (io: Server) => {
   const channel_two = 'channel_two';
 
   messageService.subscribeToSentimentScore((msg) => {
-    console.log(`Emitting the sentiment score`);
     io.emit(channel_one, msg);
   }).catch(e => console.log(`Error when consuming and processing messages on ${channel_one}`));
 
   eventService.consumeEvents((events: EventData) => {
     io.emit(channel_two, events);
-  }).catch(e => console.log(`Error when publishing events to ws clients`, e));
+  }, `groupEvent${Date.now()}`).catch(e => console.log(`Error when publishing events to ws clients`, e));
   
 }
 

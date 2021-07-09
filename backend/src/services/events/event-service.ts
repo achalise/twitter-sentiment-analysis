@@ -2,7 +2,6 @@ import { kafka } from "../../Config";
 import { EventData, nextChartData } from './events';
 
 const eventProducer = kafka.producer();
-const eventConsumer = kafka.consumer({ groupId: 'group3' })
 const eventTopic = "events";
 
 const publishEvents = async (events: EventData) => {
@@ -15,7 +14,8 @@ const publishEvents = async (events: EventData) => {
     })
 }
 
-const consumeEvents = async (cb: (events: EventData) => void) => {
+const consumeEvents = async (cb: (events: EventData) => void, groupId: string) => {
+    const eventConsumer = kafka.consumer({ groupId: groupId })
     await eventConsumer.connect();
     await eventConsumer.subscribe({ topic: eventTopic, fromBeginning: false });
     eventConsumer.run({
