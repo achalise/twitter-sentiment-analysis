@@ -1,9 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import { io } from 'socket.io-client';
 import LineChart, { ChartData } from './charts/LineChart';
-import { nextChartData } from './service/message-source';
 
 function App() {
   const [isPaused, setPause] = useState(false);
@@ -11,28 +9,30 @@ function App() {
   const [data, setData] = useState<ChartData>({labels: [] , records: []});
 
   useEffect(() => {
+    //ws://localhost:3000/socket.io/?EIO=3&transport=websocket
       const socket = io('http://localhost:5000');
       socket.on('channel_one', (e: any) => {
         setMessages([...messages, e])
       })
-      socket.on('channel_two', (e: any) => {
-        console.log(`The metrics`, e);
+      socket.on('channel_two', (chartData: ChartData) => {
+        console.log(`The metrics`, chartData);
+        setData(chartData);
+
       })
       return () => {
           socket.disconnect();
       };
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const {labels, records} = nextChartData();
-      console.log(`newRecords ${records} and new labels ${labels}`);
-      setData({labels: [...labels], records: [...records]});
-    }, 1000);
-    return () => {
-      clearInterval(interval);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     const {labels, records} = nextChartData();
+  //     setData({labels: [...labels], records: [...records]});
+  //   }, 1000);
+  //   return () => {
+  //     clearInterval(interval);
+  //   }
+  // }, []);
 
   return (
     <div className="App">

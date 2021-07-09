@@ -1,7 +1,7 @@
 let records: Array<number> = [];
 let labels: Array<string> = [];
 
-export const nextChartData = () => {
+export const nextChartData = (): EventData => {
     if(records.length === 0) {
         initialise();
         return {
@@ -26,4 +26,9 @@ const initialise = () => {
         labels.push(`${index}`);
         records.push(Math.floor(Math.random() * 10));
     })
+}
+
+export interface EventData {
+    labels: Array<string>;
+    records: Array<number>;
 }

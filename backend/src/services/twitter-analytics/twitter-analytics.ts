@@ -1,11 +1,6 @@
-import { Kafka } from 'kafkajs';
-import { getSentimentScore } from '../classifier';
+import { kafka } from '../../Config';
+import { getSentimentScore } from './classifier';
 
-
-const kafka = new Kafka({
-    clientId: 'my-app',
-    brokers: ['localhost:29092']
-});
 
 const producer = kafka.producer();
 const consumer = kafka.consumer({ groupId: 'group1' })
@@ -28,7 +23,6 @@ async function subscribeToSentimentScore(cb) {
     await sentimentScoreConsumer.run({
         eachMessage: async ({topic, partition, message}) => {
             cb(message.value.toString());
-            console.log(message.value.toString());
         }
     })
 
@@ -55,7 +49,6 @@ async function subscribe() {
                     category: sentiment
                 } as SentimentScore;
                 sendMessage(JSON.stringify(sentimentScore), Topic.SENTIMENT_SCORE_TOPIC.toString());
-                console.log(sentimentScore);
             } catch(e) {
                 console.log(e);
             }
