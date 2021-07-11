@@ -9,7 +9,7 @@ const {io, app} = initServer();
 app.use(cors());
 
 setUpWebSockets(io);
-const eventInterval = 2000;
+const eventInterval = 500;
 eventService.initEventStream(eventInterval);
 setupTwitterStream();
 

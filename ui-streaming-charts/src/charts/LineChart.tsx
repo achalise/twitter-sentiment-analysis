@@ -3,37 +3,42 @@ import { Line } from 'react-chartjs-2';
 export interface ChartData {
     records: Array<number>;
     labels: Array<string>;
+    name?: string;
+}
+
+export interface LineChartInput {
+    data: ChartData[];
     title?: string;
 }
 
-const LineChart = ({labels, records, title}: ChartData) => {
+const LineChart = (lineChartInput: LineChartInput) => {
     const chartData = {
-        labels: labels,
+        labels: lineChartInput.data.length > 0 ? lineChartInput.data[0].labels: [],
         datasets: [
             {
                 label: '# of call translates',
-                data: records,
+                data: lineChartInput.data.length > 0 ? lineChartInput.data[0].records: [],
                 fill: false,
                 lineTension: 1,
                 backgroundColor: 'rgb(102, 255, 51',
                 borderColor: 'rgba(102, 255, 51, 0.5)',
             },
-            // {
-            //     label: '# of pause',
-            //     data: records.map(i => i + Math.floor(Math.random()*3)),
-            //     fill: false,
-            //     lineTension: 0.8,
-            //     backgroundColor: 'rgb(70, 70, 71)',
-            //     borderColor: 'rgba(70, 70, 71, 0.2)',
-            // },
-            // {
-            //     label: '# of other metrics',
-            //     data: records.map(i => i + Math.floor(Math.random()*2)),
-            //     fill: false,
-            //     lineTension: 0.8,
-            //     backgroundColor: 'rgb(255, 99, 132)',
-            //     borderColor: 'rgba(255, 99, 132, 0.3)',
-            // },
+            {
+                label: '# of pause',
+                data: lineChartInput.data.length > 0 ? lineChartInput.data[1].records: [],
+                fill: false,
+                lineTension: 0.8,
+                backgroundColor: 'rgb(70, 70, 71)',
+                borderColor: 'rgba(70, 70, 71, 0.2)',
+            },
+            {
+                label: '# of other metrics',
+                data: lineChartInput.data.length > 0 ? lineChartInput.data[2].records: [],
+                fill: false,
+                lineTension: 0.8,
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgba(255, 99, 132, 0.3)',
+            },
         ],
     };
     
@@ -60,7 +65,7 @@ const LineChart = ({labels, records, title}: ChartData) => {
 
         <>
             <div className='header'>
-                <h1 className='title'>{title || `Line Graph`}</h1>
+                <h1 className='title'>{lineChartInput.title || `Line Graph`}</h1>
             </div>
             <Line data={chartData} type={'Line'} options={options} />
         </>

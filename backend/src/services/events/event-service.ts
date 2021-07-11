@@ -4,7 +4,7 @@ import { EventData, nextChartData } from './events';
 const eventProducer = kafka.producer();
 const eventTopic = "events";
 
-const publishEvents = async (events: EventData) => {
+const publishEvents = async (events: EventData[]) => {
     await eventProducer.connect();
     await eventProducer.send({
         topic: eventTopic,

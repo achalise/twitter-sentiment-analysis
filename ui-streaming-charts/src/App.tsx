@@ -4,12 +4,13 @@ import { io } from 'socket.io-client';
 import LineChart, { ChartData } from './charts/LineChart';
 
 function App() {
-  const [data, setData] = useState<ChartData>({labels: [] , records: []});
-  const [sData, setSData] = useState<ChartData>({labels: [] , records: []});
+  const [data, setData] = useState<ChartData[]>([]);
+  const [sData, setSData] = useState<ChartData[]>([]);
 
   useEffect(() => {
       const socket = io('http://localhost:5000');
-      socket.on('channel_two', (chartData: ChartData) => {
+      socket.on('channel_two', (chartData: ChartData[]) => {
+        console.log(`received events `, chartData);
         setData(chartData);
       })
       return () => {
@@ -28,10 +29,10 @@ function App() {
   return (
     <div className="App">
       <div style={{margin: `200px`}}>
-        <LineChart labels={data.labels} records={data.records} title={`Streaming with Websockets`}></LineChart>
+        <LineChart data={data} title={`Streaming with Websockets`}></LineChart>
       </div>
       <div style={{margin: `200px`}}>
-        <LineChart labels={sData.labels} records={sData.records} title={`Streaming with SSE`}></LineChart>
+        <LineChart  data={sData} title={`Streaming with SSE`}></LineChart>
       </div>
     </div>
   );
