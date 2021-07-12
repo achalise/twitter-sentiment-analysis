@@ -23,8 +23,8 @@ const consumeEvents = async (cb: (events: EventData) => void, groupId: string) =
             cb(JSON.parse(message.value.toString()));
         }
     });
-    return () => {
-        eventConsumer.disconnect();
+    return async () => {
+        await eventConsumer.disconnect();
     }
 }
 

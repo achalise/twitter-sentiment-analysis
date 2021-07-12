@@ -21,7 +21,6 @@ export const nextChartData = (): EventData[] => {
 
 const initialise = () => {
 
-    // const firstEvents = () => {
     [`callTranslate`, `pause`, `otherEvents`].map(name => {
         let labels = [];
         let records = [];
