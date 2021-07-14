@@ -9,6 +9,7 @@ export interface ChartData {
 export interface LineChartInput {
     data: ChartData[];
     title?: string;
+    legends?: string[];
 }
 
 const LineChart = (lineChartInput: LineChartInput) => {
@@ -16,7 +17,7 @@ const LineChart = (lineChartInput: LineChartInput) => {
         labels: lineChartInput.data.length > 0 ? lineChartInput.data[0].labels: [],
         datasets: [
             {
-                label: '# of call translates',
+                label: lineChartInput.legends && lineChartInput.legends.length > 0 ?  lineChartInput.legends[0] : `# of call translates`,
                 data: lineChartInput.data.length > 0 ? lineChartInput.data[0].records: [],
                 fill: false,
                 lineTension: 1,
@@ -24,7 +25,7 @@ const LineChart = (lineChartInput: LineChartInput) => {
                 borderColor: 'rgba(102, 255, 51, 0.5)',
             },
             {
-                label: '# of pause',
+                label: lineChartInput.legends && lineChartInput.legends.length > 0 ?  lineChartInput.legends[1] : '# of pause',
                 data: lineChartInput.data.length > 0 ? lineChartInput.data[1].records: [],
                 fill: false,
                 lineTension: 0.8,
@@ -32,7 +33,7 @@ const LineChart = (lineChartInput: LineChartInput) => {
                 borderColor: 'rgba(70, 70, 71, 0.2)',
             },
             {
-                label: '# of other metrics',
+                label: lineChartInput.legends && lineChartInput.legends.length > 0 ?  lineChartInput.legends[2] : '# of other metrics',
                 data: lineChartInput.data.length > 0 ? lineChartInput.data[2].records: [],
                 fill: false,
                 lineTension: 0.8,

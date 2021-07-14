@@ -1,9 +1,11 @@
 import axios  from 'axios';
 import dotenv from 'dotenv';
 
+const config = dotenv.config();
 const rapidApiKeyIMDB = process.env.IMDB_KEY;
 const rapidApiHost = process.env.IMDB_HOST;
 
+console.log(`The api key : ${config}`, config);
 async function retrieveMovieDetails(movieId: string): Promise<MovieDetails> {
     console.log(`Retrieving details for movie id ${movieId}`);
     const movieDetails = await axios.request({

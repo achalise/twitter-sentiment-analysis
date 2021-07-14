@@ -39,10 +39,9 @@ export const sentimentStreamHandler = (request: Request, response: Response, nex
       'Cache-Control': 'no-cache'
     };
     response.writeHead(200, headers);
-    response.write(`data: some data1\n\n`);
     messageService.subscribeToSentimentScore((message) => {
        console.log(message);
-      response.write(`data: ${JSON.stringify(message)}\n\n`);}, `group${Date.now()}`).catch(e => console.log(`Error when publishing sentiment SSE events`, e));
+      response.write(`data: ${(message)}\n\n`);}, `group${Date.now()}`).catch(e => console.log(`Error when publishing sentiment SSE events`, e));
   
   
     let client = {
