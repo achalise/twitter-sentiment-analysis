@@ -1,6 +1,7 @@
 import needle from 'needle';
 import messageService from './twitter-analytics';
 import dotenv from 'dotenv';
+import { MovieDetails, MovieStream } from '../imdb/moviesService';
 
 const config = dotenv.config();
 const token = process.env.TWITTER_TOKEN
@@ -41,9 +42,19 @@ const ingestTwitterStream = async () => {
   });
 }
 
+const ingestMovieStream = async () => {
+  for await (let value of MovieStream) {
+    let itemeDetails = await value as MovieDetails;
+    console.log(`Movie details`, itemeDetails);
+    messageService.sendMessage(itemeDetails.plot);
+  }
+}
+
 const setupTwitterStream  = () => {
-    messageService.subscribe().catch(error => console.log("Error when subscribing to the message topic", error));
-    ingestTwitterStream().then(d => console.log(`Successfully ingested twitter stream`)).catch(e => console.log(`the error `, e))
+    const processTwitterStream = () => messageService.subscribe().catch(error => console.log("Error when subscribing to the message topic", error));
+    ingestMovieStream().catch(e => console.log(`Error processing the movie stream`, e));
+    processTwitterStream().catch(e => console.log(`Error when processing the the records for sentiment analysis`, e));
+    //ingestTwitterStream().then(d => {console.log(`Successfully ingested twitter stream`); processTwitterStream();}).catch(e => console.log(`the error `, e))
 }
 
 export default setupTwitterStream;

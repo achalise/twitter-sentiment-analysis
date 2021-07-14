@@ -4,7 +4,6 @@ import { getSentimentScore } from './classifier';
 
 const producer = kafka.producer();
 const consumer = kafka.consumer({ groupId: 'group1' })
-const sentimentScoreConsumer = kafka.consumer({groupId: 'group2'});
 
 
 async function sendMessage(msg: string, topic = 'test-topic') {
@@ -17,7 +16,8 @@ async function sendMessage(msg: string, topic = 'test-topic') {
     })
 }
 
-async function subscribeToSentimentScore(cb) {
+async function subscribeToSentimentScore(cb, groupId) {
+    const sentimentScoreConsumer = kafka.consumer({ groupId: groupId })
     await sentimentScoreConsumer.connect();
     await sentimentScoreConsumer.subscribe({topic: Topic.SENTIMENT_SCORE_TOPIC, fromBeginning: false});
     await sentimentScoreConsumer.run({
@@ -48,7 +48,8 @@ async function subscribe() {
                     score: score,
                     category: sentiment
                 } as SentimentScore;
-                sendMessage(JSON.stringify(sentimentScore), Topic.SENTIMENT_SCORE_TOPIC.toString());
+                await sendMessage(JSON.stringify(sentimentScore), Topic.SENTIMENT_SCORE_TOPIC.toString());
+                console.log(`Sentiment score:${sentimentScore}`, sentimentScore);
             } catch(e) {
                 console.log(e);
             }

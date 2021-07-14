@@ -36,11 +36,12 @@ async function loadMetadata() {
     }
 }
 async function getSentimentScore(rawText) {
+  console.log(`raw text`, rawText);
     let text = rawText.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '')
     if(!model) { await loadModel(); }
     if(!metadata) { await loadMetadata(); }
     const inputText = text.trim().toLowerCase().replace(/(\.|\,|\!,|\#,|\@)/g, '').split(' ');
-    //console.log(inputText);
+    console.log(`Sentiment score for the text: `, JSON.stringify(inputText));
     // Convert the words to a sequence of word indices.
     const sequence = inputText.map(word => {
       let wordIndex = metadata.word_index[word] + metadata.index_from;
